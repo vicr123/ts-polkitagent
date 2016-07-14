@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
+#include <QIcon>
 
 namespace Ui {
 class Authenticate;
@@ -25,6 +26,10 @@ signals:
 
 public slots:
     void setMessage(QString message);
+
+    void setUser(QString user);
+
+    void setIcon(QIcon icon);
 
 private slots:
     void on_pushButton_2_clicked();

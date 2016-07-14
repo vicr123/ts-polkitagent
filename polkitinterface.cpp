@@ -2,6 +2,7 @@
 
 PolkitInterface::PolkitInterface(QObject *parent) : PolkitQt1::Agent::Listener(parent)
 {
+    //Register our Polkit service on DBus
     new PolkitAuthAgentAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService("org.thesuite.polkitAuthAgent");
@@ -10,27 +11,34 @@ PolkitInterface::PolkitInterface(QObject *parent) : PolkitQt1::Agent::Listener(p
                                                       QDBusConnection::ExportScriptableSlots | QDBusConnection::ExportScriptableProperties | QDBusConnection::ExportAdaptors)) {
         qDebug() << "Could not initiate Authentication Agent on DBus!";
     }
+
+    //Create a new authentication window
     authWin = new Authenticate();
     connect(authWin, SIGNAL(okClicked()), this, SLOT(windowAccepted()));
     connect(authWin, SIGNAL(rejected()), this, SLOT(windowRejected()));
 }
 
-void PolkitInterface::windowAccepted() {
+void PolkitInterface::windowAccepted() { //User clicked OK
     this->session->setResponse(authWin->getPassword());
 }
 
-void PolkitInterface::windowRejected() {
+void PolkitInterface::windowRejected() { //User clicked Cancel
     this->dialogCanceled = true;
     this->session->cancel();
 }
 
 void PolkitInterface::initiateAuthentication(const QString &actionId, const QString &message, const QString &iconName, const PolkitQt1::Details &details, const QString &cookie, const PolkitQt1::Identity::List &identities, PolkitQt1::Agent::AsyncResult *result) {
+    //New Polkit Authentication Request. Set required variables.
     currentIdentity = identities.first();
     this->asyncResult = result;
     this->cookie = cookie;
+
+    //Show Authentication Window.
     authWin->setMessage(message);
+    authWin->setIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("dialog-password")));
     authWin->showFullScreen();
 
+    //Initialize the session.
     this->initSession();
 }
 
@@ -67,7 +75,9 @@ void PolkitInterface::finish() {
 }
 
 void PolkitInterface::sessionRequest(QString request, bool echo) {
-
+    if (request.startsWith("password:", Qt::CaseInsensitive)) {
+        authWin->setUser(currentIdentity.toString().remove("unix-user:"));
+    }
 }
 
 bool PolkitInterface::initiateAuthenticationFinish() {
@@ -79,6 +89,3 @@ void PolkitInterface::cancelAuthentication() {
     isAuthenticating = false;
 }
 
-void PolkitInterface::setWIdForAction(const QString &action, qulonglong wID) {
-
-}

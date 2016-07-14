@@ -37,6 +37,10 @@ void Authenticate::setMessage(QString message) {
     ui->message->setText(message);
 }
 
+void Authenticate::setIcon(QIcon icon) {
+    ui->polkitIcon->setPixmap(icon.pixmap(22, 22));
+}
+
 void Authenticate::on_pushButton_2_clicked()
 {
     //this->accept();
@@ -52,6 +56,10 @@ void Authenticate::on_pushButton_2_clicked()
     });
 
     emit okClicked();
+}
+
+void Authenticate::setUser(QString user) {
+    ui->authenticationUser->setText("Logging in as " + user + ":");
 }
 
 void Authenticate::on_pushButton_clicked()

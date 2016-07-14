@@ -6,10 +6,6 @@
     </method>
     <method name="cancelAuthentication">
     </method>
-    <method name="setWIdForAction">
-      <arg name="action" type="s" direction="in"/>
-      <arg name="wID" type="t" direction="in"/>
-    </method>
     <method name="sessionRequest">
       <arg name="request" type="s" direction="in"/>
       <arg name="echo" type="b" direction="in"/>

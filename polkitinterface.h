@@ -33,7 +33,6 @@ public Q_SLOTS:
                                         PolkitQt1::Agent::AsyncResult *result);
     bool initiateAuthenticationFinish();
     void cancelAuthentication();
-    void setWIdForAction(const QString &action, qulonglong wID);
 
     void sessionRequest(QString request, bool echo);
     void sessionComplete(bool ok);
