@@ -30,6 +30,7 @@ void Authenticate::showFullScreen(bool showError) {
     connect(a, SIGNAL(finished()), a, SLOT(deleteLater()));
 
     QDialog::showFullScreen();
+    ui->lineEdit->setFocus();
 }
 
 void Authenticate::setMessage(QString message) {
@@ -47,6 +48,7 @@ void Authenticate::on_pushButton_2_clicked()
     connect(a, SIGNAL(finished()), a, SLOT(deleteLater()));
     connect(a, &QPropertyAnimation::finished, [=]() {
         ui->authFrame->setVisible(false);
+        ui->lineEdit->setText("");
     });
 
     emit okClicked();
@@ -59,7 +61,6 @@ void Authenticate::on_pushButton_clicked()
 
 QString Authenticate::getPassword() {
     QString ret = ui->lineEdit->text();
-    ui->lineEdit->setText("");
     return ret;
 }
 

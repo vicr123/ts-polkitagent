@@ -111,6 +111,9 @@
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
         </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -181,9 +184,6 @@
            <iconset theme="dialog-cancel">
             <normaloff>.</normaloff>.</iconset>
           </property>
-          <property name="autoDefault">
-           <bool>false</bool>
-          </property>
          </widget>
         </item>
         <item>
@@ -195,8 +195,8 @@
            <iconset theme="dialog-ok">
             <normaloff>.</normaloff>.</iconset>
           </property>
-          <property name="autoDefault">
-           <bool>false</bool>
+          <property name="default">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -220,6 +220,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_2</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
