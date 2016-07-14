@@ -14,7 +14,8 @@
    <string>Authentication Required</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="dialog-password"/>
+   <iconset theme="dialog-password">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
@@ -177,7 +178,11 @@
            <string>Cancel</string>
           </property>
           <property name="icon">
-           <iconset theme="dialog-cancel"/>
+           <iconset theme="dialog-cancel">
+            <normaloff>.</normaloff>.</iconset>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -187,7 +192,11 @@
            <string>OK</string>
           </property>
           <property name="icon">
-           <iconset theme="dialog-ok"/>
+           <iconset theme="dialog-ok">
+            <normaloff>.</normaloff>.</iconset>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
