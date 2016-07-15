@@ -59,7 +59,7 @@ void Authenticate::on_pushButton_2_clicked()
 }
 
 void Authenticate::setUser(QString user) {
-    ui->authenticationUser->setText("Logging in as " + user + ":");
+    ui->authenticationUser->setText(user);
 }
 
 void Authenticate::on_pushButton_clicked()
