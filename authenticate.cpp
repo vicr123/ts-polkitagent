@@ -20,6 +20,7 @@ Authenticate::~Authenticate()
 
 void Authenticate::showFullScreen(bool showError) {
     ui->errorFrame->setVisible(showError);
+    ui->lineEdit->setText("");
 
     ui->authFrame->setVisible(true);
     QPropertyAnimation *a = new QPropertyAnimation(fadeEffect, "opacity");
