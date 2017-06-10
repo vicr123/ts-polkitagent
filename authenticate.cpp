@@ -11,6 +11,26 @@ Authenticate::Authenticate(QWidget *parent) :
     ui->errorFrame->setVisible(false);
     fadeEffect = new QGraphicsOpacityEffect(this);
     ui->authFrame->setGraphicsEffect(fadeEffect);
+
+    //Set up clock
+    QTimer* clockTimer = new QTimer();
+    clockTimer->setInterval(1000);
+    connect(clockTimer, &QTimer::timeout, [=]() {
+        ui->dateLabel->setText(QDateTime::currentDateTime().toString("ddd dd MMM yyyy"));
+        ui->timeLabel->setText(QDateTime::currentDateTime().toString("hh:mm:ss"));
+    });
+    clockTimer->start();
+
+    connect(tVirtualKeyboard::instance(), &tVirtualKeyboard::keyboardVisibleChanged, [=](bool visible) {
+        if (visible) {
+            QRect desktopRect = QApplication::desktop()->screenGeometry();
+            desktopRect.setHeight(desktopRect.height() - tVirtualKeyboard::instance()->height());
+            this->setGeometry(desktopRect);
+        } else {
+            QRect desktopRect = QApplication::desktop()->screenGeometry();
+            this->setGeometry(desktopRect);
+        }
+    });
 }
 
 Authenticate::~Authenticate()
@@ -30,7 +50,18 @@ void Authenticate::showFullScreen(bool showError) {
     a->start();
     connect(a, SIGNAL(finished()), a, SLOT(deleteLater()));
 
-    QDialog::showFullScreen();
+    //Show onscreen keyboard if it is running
+    tVirtualKeyboard::instance()->showKeyboard();
+
+    ui->keyboardButton->setVisible(tVirtualKeyboard::instance()->isKeyboardRunning());
+
+    QRect desktopRect = QApplication::desktop()->screenGeometry();
+    desktopRect.setHeight(desktopRect.height() - tVirtualKeyboard::instance()->height());
+    this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+
+    //QDialog::showFullScreen();
+    this->show();
+    this->setGeometry(desktopRect);
     ui->lineEdit->setFocus();
 }
 
@@ -44,7 +75,6 @@ void Authenticate::setIcon(QIcon icon) {
 
 void Authenticate::on_pushButton_2_clicked()
 {
-    //this->accept();
     QPropertyAnimation *a = new QPropertyAnimation(fadeEffect, "opacity");
     a->setDuration(250);
     a->setStartValue(1);
@@ -76,4 +106,21 @@ QString Authenticate::getPassword() {
 void Authenticate::on_lineEdit_returnPressed()
 {
     ui->pushButton_2->click();
+}
+
+
+void Authenticate::setGeometry(int x, int y, int w, int h) { //Use wmctrl command because KWin has a problem with moving windows offscreen.
+    QDialog::setGeometry(x, y, w, h);
+    QProcess::execute("wmctrl -r " + this->windowTitle() + " -e 0," +
+                      QString::number(x) + "," + QString::number(y) + "," +
+                      QString::number(w) + "," + QString::number(h));
+}
+
+void Authenticate::setGeometry(QRect geometry) {
+    this->setGeometry(geometry.x(), geometry.y(), geometry.width(), geometry.height());
+}
+
+void Authenticate::on_keyboardButton_clicked()
+{
+    tVirtualKeyboard::instance()->showKeyboard();
 }
