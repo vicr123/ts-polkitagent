@@ -22,13 +22,13 @@ PolkitInterface::PolkitInterface(QObject *parent) : PolkitQt1::Agent::Listener(p
 void PolkitInterface::windowAccepted() { //User clicked OK
     //Initialize the session.
     this->initSession();
-
     this->session->setResponse(authWin->getPassword());
 }
 
 void PolkitInterface::windowRejected() { //User clicked Cancel
     this->dialogCanceled = true;
-    //this->session->cancel();
+    this->initSession();
+    this->session->cancel();
 }
 
 void PolkitInterface::initiateAuthentication(const QString &actionId, const QString &message, const QString &iconName, const PolkitQt1::Details &details, const QString &cookie, const PolkitQt1::Identity::List &identities, PolkitQt1::Agent::AsyncResult *result) {
