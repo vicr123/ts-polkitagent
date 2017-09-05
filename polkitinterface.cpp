@@ -26,8 +26,8 @@ void PolkitInterface::windowAccepted() { //User clicked OK
 }
 
 void PolkitInterface::windowRejected() { //User clicked Cancel
-    this->dialogCanceled = true;
     this->initSession();
+    this->dialogCanceled = true;
     this->session->cancel();
 }
 
