@@ -16,15 +16,19 @@ PolkitInterface::PolkitInterface(QObject *parent) : PolkitQt1::Agent::Listener(p
     authWin = new Authenticate();
     connect(authWin, SIGNAL(okClicked()), this, SLOT(windowAccepted()));
     connect(authWin, SIGNAL(rejected()), this, SLOT(windowRejected()));
+    connect(authWin, SIGNAL(newUser(PolkitQt1::Identity)), this, SLOT(setUser(PolkitQt1::Identity)));
 }
 
 void PolkitInterface::windowAccepted() { //User clicked OK
+    //Initialize the session.
+    this->initSession();
+
     this->session->setResponse(authWin->getPassword());
 }
 
 void PolkitInterface::windowRejected() { //User clicked Cancel
     this->dialogCanceled = true;
-    this->session->cancel();
+    //this->session->cancel();
 }
 
 void PolkitInterface::initiateAuthentication(const QString &actionId, const QString &message, const QString &iconName, const PolkitQt1::Details &details, const QString &cookie, const PolkitQt1::Identity::List &identities, PolkitQt1::Agent::AsyncResult *result) {
@@ -36,10 +40,10 @@ void PolkitInterface::initiateAuthentication(const QString &actionId, const QStr
     //Show Authentication Window.
     authWin->setMessage(message);
     authWin->setIcon(QIcon::fromTheme(iconName, QIcon::fromTheme("dialog-password")));
+    authWin->setUsers(identities);
     authWin->showFullScreen();
 
-    //Initialize the session.
-    this->initSession();
+    isAuthenticating = true;
 }
 
 void PolkitInterface::initSession() {
@@ -48,8 +52,6 @@ void PolkitInterface::initSession() {
     connect(session, SIGNAL(request(QString,bool)), this, SLOT(sessionRequest(QString,bool)));
     connect(session, SIGNAL(completed(bool)), this, SLOT(sessionComplete(bool)));
     session->initiate();
-
-    isAuthenticating = true;
 }
 
 void PolkitInterface::sessionComplete(bool ok) {
@@ -69,7 +71,8 @@ void PolkitInterface::finish() {
         isAuthenticating = false;
     } else {
         session->deleteLater();
-        initSession();
+        //initSession();
+        isAuthenticating = true;
         authWin->showFullScreen(true);
     }
 }
@@ -89,3 +92,6 @@ void PolkitInterface::cancelAuthentication() {
     isAuthenticating = false;
 }
 
+void PolkitInterface::setUser(PolkitQt1::Identity newUser) {
+    this->currentIdentity = newUser;
+}

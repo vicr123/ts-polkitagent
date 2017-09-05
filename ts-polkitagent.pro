@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui dbus thelib
+QT       += core gui dbus thelib x11extras
 CONFIG   += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-LIBS += -lpolkit-qt5-agent-1 -lpolkit-qt5-core-1
+LIBS += -lpolkit-qt5-agent-1 -lpolkit-qt5-core-1 -lX11
 
 TARGET = ts-polkitagent
 TEMPLATE = app

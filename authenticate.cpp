@@ -60,9 +60,19 @@ void Authenticate::showFullScreen(bool showError) {
     this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
     //QDialog::showFullScreen();
+    Atom DesktopWindowTypeAtom;
+    DesktopWindowTypeAtom = XInternAtom(QX11Info::display(), "_NET_WM_WINDOW_TYPE_NORMAL", False);
+    XChangeProperty(QX11Info::display(), this->winId(), XInternAtom(QX11Info::display(), "_NET_WM_WINDOW_TYPE", False),
+                     XA_ATOM, 32, PropModeReplace, (unsigned char*) &DesktopWindowTypeAtom, 1); //Change Window Type
+
+    unsigned long desktop = 0xFFFFFFFF;
+    XChangeProperty(QX11Info::display(), this->winId(), XInternAtom(QX11Info::display(), "_NET_WM_DESKTOP", False),
+                     XA_CARDINAL, 32, PropModeReplace, (unsigned char*) &desktop, 1); //Set visible on all desktops
+
     this->show();
     this->setGeometry(desktopRect);
     ui->lineEdit->setFocus();
+    this->raise();
 }
 
 void Authenticate::setMessage(QString message) {
@@ -90,7 +100,21 @@ void Authenticate::on_pushButton_2_clicked()
 }
 
 void Authenticate::setUser(QString user) {
-    ui->authenticationUser->setText(user);
+    //ui->authenticationUser->setText(user);
+
+    for (int i = 0; i < ui->authenticationUsers->count(); i++) {
+        if (ui->authenticationUsers->itemText(i) == user) {
+            ui->authenticationUsers->setCurrentIndex(i);
+            break;
+        }
+    }
+}
+
+void Authenticate::setUsers(PolkitQt1::Identity::List users) {
+    ui->authenticationUsers->clear();
+    for (PolkitQt1::Identity identity : users) {
+        ui->authenticationUsers->addItem(identity.toString().remove("unix-user:"), QVariant::fromValue(identity));
+    }
 }
 
 void Authenticate::on_pushButton_clicked()
@@ -123,4 +147,9 @@ void Authenticate::setGeometry(QRect geometry) {
 void Authenticate::on_keyboardButton_clicked()
 {
     tVirtualKeyboard::instance()->showKeyboard();
+}
+
+void Authenticate::on_authenticationUsers_currentIndexChanged(int index)
+{
+    emit this->newUser(ui->authenticationUsers->itemData(index).value<PolkitQt1::Identity>());
 }

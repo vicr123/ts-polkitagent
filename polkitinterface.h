@@ -41,6 +41,7 @@ public Q_SLOTS:
 
     void windowAccepted();
     void windowRejected();
+    void setUser(PolkitQt1::Identity newUser);
 
 private:
     Authenticate* authWin;
