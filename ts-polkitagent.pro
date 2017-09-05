@@ -24,3 +24,9 @@ HEADERS  += \
 
 FORMS    += \
     authenticate.ui
+
+unix {
+    target.path = /usr/lib
+
+    INSTALLS += target
+}
